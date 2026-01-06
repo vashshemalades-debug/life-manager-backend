@@ -18,7 +18,7 @@ app.add_middleware(
 
 # --- MONGODB ULANIŞI ---
 # O'zingiz tayyorlagan parolli kodni shu yerga qo'ying:
-MONGO_URL = "mongodb+srv://vashshemalades_db_user:PAROLINGIZ@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority"
+MONGO_URL = "mongodb+srv://vashshemalades_db_user:sherbek15147051@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority"
 client = AsyncIOMotorClient(MONGO_URL)
 db = client.hayot_menejeri  # Baza nomi
 
