@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -17,10 +18,12 @@ app.add_middleware(
 )
 
 # --- MONGODB ULANIŞI ---
-# O'zingiz tayyorlagan parolli kodni shu yerga qo'ying:
-MONGO_URL = "mongodb+srv://vashshemalades_db_user:sherbek15147051@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority"
+# Render Environment Variables-dan linkni oladi. 
+# Agar u yerda topilmasa, sizning real linklaringizni ishlatadi.
+MONGO_URL = os.getenv("MONGODB_URL", "mongodb+srv://vashshemalades_db_user:sherbek15147051@myfirstcluster.atxhjna.mongodb.net/hayot_menejeri?retryWrites=true&w=majority")
+
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.hayot_menejeri  # Baza nomi
+db = client.hayot_menejeri
 
 # --- MODELLAR ---
 class Xarajat(BaseModel):
@@ -30,10 +33,11 @@ class Xarajat(BaseModel):
 class Vazifa(BaseModel):
     matn: str
 
-# MongoDB ID'larini frontendga moslab o'zgartirish (Yordamchi funksiya)
+# MongoDB ID'larini frontendga moslab o'zgartirish
 def fix_id(item):
-    item["id"] = str(item["_id"])
-    del item["_id"]
+    if item:
+        item["id"] = str(item["_id"])
+        del item["_id"]
     return item
 
 # --- ANALITIKA ---
@@ -43,7 +47,6 @@ async def get_statistika():
     hafta_boshi = (datetime.now() - timedelta(days=7)).date().isoformat()
     oy_boshi = date.today().replace(day=1).isoformat()
 
-    # Statistika uchun barcha xarajatlarni olish
     cursor = db.xarajatlar.find()
     bugun_sum = 0
     hafta_sum = 0
